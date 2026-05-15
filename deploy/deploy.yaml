@@ -7,26 +7,49 @@ services:
       - "PORT=8000"
       # REQUIRED
       - "MODEL=Qwen/Qwen2.5-7B-Instruct"
-      # OPTIONAL (for gated models)
+      # OPTIONAL (gated models)
       # - "HF_TOKEN=__SET_ME__"
-      # OPTIONAL extra args, e.g. context length / quant / parallelism
-      # - "VLLM_ARGS=--max-model-len 131072"
+      # OPTIONAL: keep 128K context (pick values your model supports)
+      - "VLLM_ARGS=--max-model-len 131072"
+      # Persist HF cache on Akash
+      - "HF_HOME=/data/hf"
+      - "HF_HUB_CACHE=/data/hf/hub"
+      - "TRANSFORMERS_CACHE=/data/hf/transformers"
+    params:
+      storage:
+        data:
+          mount: /data
     expose:
       - port: 8000
         as: 80
         to:
           - global: true
+        # Optional custom host (uncomment and set HOST env var if you want domain routing)
+        # accept:
+        #   - "llm.yourdomain.com"
 
 profiles:
   compute:
     vllm:
       resources:
         cpu:
-          units: 4
+          units: 8
         memory:
-          size: 32Gi
+          size: 64Gi
         storage:
-          size: 50Gi
+          - name: data
+            size: 100Gi
+            attributes:
+              persistent: true
+              class: beta3
+        gpu:
+          units: 1
+          attributes:
+            vendor:
+              nvidia:
+                # T4 is common/cheap; adjust if you bid A10/A100 etc
+                - model: t4
+
   placement:
     dcloud:
       pricing:
