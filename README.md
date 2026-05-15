@@ -25,3 +25,21 @@ In Agent Zero Model Configuration UI:
 - `MODEL` (required)
 - `HF_TOKEN` (optional)
 - `VLLM_ARGS` (optional)
+
+## Smoke test
+After deploy (local or Akash), hit:
+
+```bash
+curl -sS $BASE_URL/v1/models | jq .
+
+curl -sS $BASE_URL/v1/chat/completions \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer ignored' \
+  -d '{"model":"'$MODEL'","messages":[{"role":"user","content":"hi"}],"temperature":0.2}' \
+  | jq .
+```
+
+## Akash deploy
+Use your existing Akash flow; this repo provides `deploy/deploy.yaml`.
+
+Agent Zero: set OpenAI-compatible `api_base` to the resulting Akash URL.

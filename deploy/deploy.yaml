@@ -1,0 +1,41 @@
+version: "2.0"
+
+services:
+  vllm:
+    image: ghcr.io/toxmon/akashlocalllm:main
+    env:
+      - "PORT=8000"
+      # REQUIRED
+      - "MODEL=Qwen/Qwen2.5-7B-Instruct"
+      # OPTIONAL (for gated models)
+      # - "HF_TOKEN=__SET_ME__"
+      # OPTIONAL extra args, e.g. context length / quant / parallelism
+      # - "VLLM_ARGS=--max-model-len 131072"
+    expose:
+      - port: 8000
+        as: 80
+        to:
+          - global: true
+
+profiles:
+  compute:
+    vllm:
+      resources:
+        cpu:
+          units: 4
+        memory:
+          size: 32Gi
+        storage:
+          size: 50Gi
+  placement:
+    dcloud:
+      pricing:
+        vllm:
+          denom: uact
+          amount: 10000
+
+deployment:
+  vllm:
+    dcloud:
+      profile: vllm
+      count: 1
