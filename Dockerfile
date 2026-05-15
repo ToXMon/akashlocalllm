@@ -1,6 +1,6 @@
 # Pinned vLLM OpenAI-compatible server image
 # Provides /v1/chat/completions and /v1/models
-FROM vllm/vllm-openai:0.5.1.post1-cu121
+FROM vllm/vllm-openai:v0.21.0-cu129-ubuntu2404
 
 # Optional: set a sane default port (Akash/Agent Zero will hit base URL)
 ENV PORT=8000
