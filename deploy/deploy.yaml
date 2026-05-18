@@ -9,7 +9,8 @@ services:
       - "MODEL=Qwen/Qwen2.5-7B-Instruct"
       # OPTIONAL (gated models)
       # - "HF_TOKEN=__SET_ME__"
-      # OPTIONAL: keep 128K context (pick values your model supports)
+      # Qwen2.5-7B supports 128K via RoPE scaling; override flag needed
+      - "VLLM_ALLOW_LONG_MAX_MODEL_LEN=1"
       - "VLLM_ARGS=--max-model-len 131072"
       # Persist HF cache on Akash
       - "HF_HOME=/data/hf"
